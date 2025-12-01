@@ -6,6 +6,22 @@ public class Metodos {
     static ArrayList<Producto> productosDB = new ArrayList<>();
     static Scanner ingreso = new Scanner(System.in);
 
+    public static void mostrarMenu() {
+        System.out.println("\nMenú Principal:");
+        System.out.println("1) Agregar producto");
+        System.out.println("2) Listar productos");
+        System.out.println("3) Buscar / Actualizar producto (por ID o nombre)");
+        System.out.println("4) Eliminar producto");
+        System.out.println("5) Salir");
+        System.out.print("Seleccione una opción: ");
+
+    }
+
+    public static void pausa() {
+        System.out.println("\nPulsa ENTER para continuar...");
+        ingreso.nextLine();
+    }
+
     // Opción 1: Agregar producto
     public static void agregarProducto() {
         System.out.println("\n--- Cargar nuevo producto ---");
@@ -15,12 +31,11 @@ public class Metodos {
         double precio = ingreso.nextDouble();
         System.out.print("Ingrese la cantidad en stock: ");
         int cantidad = ingreso.nextInt();
-        ingreso.nextLine();
 
         Producto nuevoProducto = new Producto(nombre, precio, cantidad);
         productosDB.add(nuevoProducto);
 
-        System.out.println("✅ Producto creado correctamente!");
+        System.out.println("\n✅ Producto creado correctamente!");
         pausa();
     }
 
@@ -31,33 +46,36 @@ public class Metodos {
             System.out.println("No hay productos registrados.");
         } else {
             for (Producto producto : productosDB) {
-                System.out.println(producto);
+                System.out.println("ID: "+producto.getId()+" | Nombre: "+producto.getNombre()+
+                        " | Precio: "+producto.getPrecio()+" | Stock: "+producto.getCantidad());
             }
+            pausa();
         }
-        pausa();
+
 
     }
-/*
+
     // Opción 3: Buscar y actualizar producto por ID o nombre
-    private static void buscarActualizarProducto() {
-        System.out.print("Desea buscar por ID o Nombre? (id/nombre): ");
-        String opcion = ingreso.nextLine();
+    public static void buscarActualizarProducto() {
+        System.out.print("Desea buscar por ID o Nombre? (Ingrese 1 para id o 2 para nombre): ");
+        int opcion = ingreso.nextInt();
+        ingreso.nextLine();
 
-        Producto producto = null;
+        Producto pEncontrado = null;
 
-        if (opcion.equalsIgnoreCase("id")) {
+        if (opcion == 1) {
             System.out.print("Ingrese el ID del producto: ");
             int id = ingreso.nextInt();
             ingreso.nextLine();
 
             for (Producto p : productosDB) {
                 if (p.getId() == id) {
-                    producto = p;
+                    pEncontrado = p;
                     break;
                 }
             }
 
-        } else if (opcion.equalsIgnoreCase("nombre")) {
+        } else if (opcion == 2) {
             System.out.print("Ingrese el nombre del producto: ");
             String nombre = ingreso.nextLine();
 
@@ -70,10 +88,9 @@ public class Metodos {
 
             if (encontrados.isEmpty()) {
                 System.out.println("❌ No se encontraron productos con ese nombre.");
-                pausa();
                 return;
             } else if (encontrados.size() == 1) {
-                producto = encontrados.get(0);
+                pEncontrado = encontrados.get(0);
             } else {
                 System.out.println("Se encontraron varios productos:");
                 for (Producto p : encontrados) {
@@ -85,7 +102,7 @@ public class Metodos {
 
                 for (Producto p : encontrados) {
                     if (p.getId() == idElegido) {
-                        producto = p;
+                        pEncontrado = p;
                         break;
                     }
                 }
@@ -95,28 +112,44 @@ public class Metodos {
             return;
         }
 
-        if (producto != null) {
-            System.out.println("Producto seleccionado: " + producto);
+        if (pEncontrado != null) {
+            System.out.println("Producto seleccionado: " + pEncontrado
+            );
             System.out.print("Desea actualizar precio y stock? (s/n): ");
             String respuesta = ingreso.nextLine();
-            if (respuesta.equalsIgnoreCase("s")) {
-                System.out.print("Nuevo precio: ");
-                double precio = ingreso.nextDouble();
-                System.out.print("Nuevo stock: ");
-                int stock = ingreso.nextInt();
-                ingreso.nextLine();
-                producto.setPrecio(precio);
-                producto.setStock(stock);
-                System.out.println("✅ Producto actualizado!");
-            }
+            int nuevostock = 0;
+            double nuevoPrecio = 0;
+            do {
+                if (respuesta.equalsIgnoreCase("s")) {
+                    System.out.print("Nuevo precio: ");
+                    nuevoPrecio = ingreso.nextDouble();
+                    if (nuevoPrecio < 0){
+                        System.out.println("El precio no puede ser negativo!");
+                        pausa();
+                        break;
+                    }
+                    System.out.print("Nuevo stock: ");
+                    nuevostock = ingreso.nextInt();
+                    if (nuevostock < 0) {
+                        System.out.println("El numero no puede ser negativo!");
+                        ingreso.nextLine();
+                        pausa();
+                        break;
+                    }
+                    ingreso.nextLine();
+                    pEncontrado.setPrecio(nuevoPrecio);
+                    pEncontrado.setCantidad(nuevostock);
+                    System.out.println("✅ Producto actualizado!");
+                }
+            }while( nuevostock < 0 || nuevoPrecio < 0);
         } else {
             System.out.println("❌ Producto no encontrado.");
+            pausa();
         }
-        pausa();
     }
 
     // Opción 4: Eliminar producto
-    private static void eliminarProducto() {
+    public static void eliminarProducto() {
         System.out.print("Ingrese el ID del producto a eliminar: ");
         int id = ingreso.nextInt();
         ingreso.nextLine();
@@ -131,16 +164,12 @@ public class Metodos {
 
         if (producto != null) {
             productosDB.remove(producto);
-            System.out.println("✅ Producto eliminado correctamente.");
+            System.out.println("✅ Producto: "+producto.getNombre()+" | id: "+producto.getId()+" | Precio: "+producto.getPrecio()+
+                    " | Stock: "+producto.getCantidad()+"--- Eliminado correctamente.");
         } else {
             System.out.println("❌ Producto no encontrado.");
         }
         pausa();
     }
-    */
 
-    private static void pausa() {
-        System.out.println("\nPulsa ENTER para continuar...");
-        ingreso.nextLine();
-    }
 }
