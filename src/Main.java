@@ -19,47 +19,26 @@ public class Main {
 
             switch (opcionElegida) {
                 case 1: Metodos.agregarProducto();
-                break;
+                    break;
                 case 2: Metodos.listarProductos();
-                break;
+                    break;
                 case 3: Metodos.buscarActualizarProducto();
-                break;
+                    break;
                 case 4: Metodos.eliminarProducto();
-                break;
-                case 5:
+                    break;
+                case 5: Metodos.crearPedido();
+                    break;
+                case 6: Metodos.listarPedidos();
+                    break;
+                case 7:
                     System.out.println("Saliendo del sistema...");
                     System.out.println("Gracias por usar SuperMarket Manager Java");
                     break menu;
                 default:
                     System.out.println("Opción inválida. Intente nuevamente.");
                     break;
-                }
-        }
-    }
-
-/*
-    // Opción 4: Eliminar producto
-    private static void eliminarProducto() {
-        System.out.print("Ingrese el ID del producto a eliminar: ");
-        int id = ingreso.nextInt();
-        ingreso.nextLine();
-
-        Producto producto = null;
-        for (Producto p : productosDB) {
-            if (p.getId() == id) {
-                producto = p;
-                break;
             }
         }
-
-        if (producto != null) {
-            productosDB.remove(producto);
-            System.out.println("✅ Producto eliminado correctamente.");
-        } else {
-            System.out.println("❌ Producto no encontrado.");
-        }
-        pausa();
-    }*/
-
+    }
 
 }

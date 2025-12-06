@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 public class Metodos {
     static ArrayList<Producto> productosDB = new ArrayList<>();
+    static ArrayList<Pedido> pedidosDB = new ArrayList<>();
+
     static Scanner ingreso = new Scanner(System.in);
 
     public static void mostrarMenu() {
@@ -12,7 +14,9 @@ public class Metodos {
         System.out.println("2) Listar productos");
         System.out.println("3) Buscar / Actualizar producto (por ID o nombre)");
         System.out.println("4) Eliminar producto");
-        System.out.println("5) Salir");
+        System.out.println("5. Crear Pedido");
+        System.out.println("6. Listar Pedidos");
+        System.out.println("7) Salir");
         System.out.print("Seleccione una opción: ");
 
     }
@@ -30,9 +34,9 @@ public class Metodos {
         System.out.print("Ingrese el precio: ");
         double precio = ingreso.nextDouble();
         System.out.print("Ingrese la cantidad en stock: ");
-        int cantidad = ingreso.nextInt();
+        int stock = ingreso.nextInt();
 
-        Producto nuevoProducto = new Producto(nombre, precio, cantidad);
+        Producto nuevoProducto = new Producto(nombre, precio, stock);
         productosDB.add(nuevoProducto);
 
         System.out.println("\n✅ Producto creado correctamente!");
@@ -47,7 +51,7 @@ public class Metodos {
         } else {
             for (Producto producto : productosDB) {
                 System.out.println("ID: "+producto.getId()+" | Nombre: "+producto.getNombre()+
-                        " | Precio: "+producto.getPrecio()+" | Stock: "+producto.getCantidad());
+                        " | Precio: "+producto.getPrecio()+" | Stock: "+producto.getStock());
             }
             pausa();
         }
@@ -138,7 +142,7 @@ public class Metodos {
                     }
                     ingreso.nextLine();
                     pEncontrado.setPrecio(nuevoPrecio);
-                    pEncontrado.setCantidad(nuevostock);
+                    pEncontrado.setStock(nuevostock);
                     System.out.println("✅ Producto actualizado!");
                 }
             }while( nuevostock < 0 || nuevoPrecio < 0);
@@ -165,11 +169,82 @@ public class Metodos {
         if (producto != null) {
             productosDB.remove(producto);
             System.out.println("✅ Producto: "+producto.getNombre()+" | id: "+producto.getId()+" | Precio: "+producto.getPrecio()+
-                    " | Stock: "+producto.getCantidad()+"--- Eliminado correctamente.");
+                    " | Stock: "+producto.getStock()+"--- Eliminado correctamente.");
         } else {
             System.out.println("❌ Producto no encontrado.");
         }
         pausa();
     }
+
+    // Opcion 5: Crear un pedido
+    public static void crearPedido() {
+        Pedido pedido = new Pedido();
+        int opcion;
+
+        if (productosDB.isEmpty()) {
+            System.out.println("No hay productos disponibles.");
+            return;
+        }
+
+        do {
+            System.out.println("---- AGREGAR PRODUCTO AL PEDIDO ----");
+            listarProductos();
+
+            System.out.print("Ingrese ID del producto (0 para terminar): ");
+            opcion = ingreso.nextInt();
+
+            if (opcion == 0) break;
+
+            Producto encontrado = null;
+            for (Producto p : productosDB) {
+                if (p.getId() == opcion) {
+                    encontrado = p;
+                    break;
+                }
+            }
+
+            if (encontrado == null) {
+                System.out.println("Producto no encontrado.");
+                continue;
+            }
+
+            System.out.print("Cantidad: ");
+            int cantidad = ingreso.nextInt();
+
+            if (cantidad <= 0) {
+                System.out.println("Cantidad no válida.");
+                continue;
+            }
+            if (encontrado.disminuirStock(cantidad)){
+                System.out.println("Pedido registrado. Stock acualizado");
+                Pedido.agregarLinea(encontrado, cantidad);
+                System.out.println("Producto agregado al pedido.");
+
+            } else {
+                System.out.println("No hay stock sufuciente. Stock actual: "+encontrado.getStock());
+            }
+
+
+        } while (true);
+
+        pedidosDB.add(pedido);
+        System.out.println("Pedido creado exitosamente:");
+        System.out.println(pedido);
+    }
+
+    // Opcion 6: Listar pedidos
+    public static void listarPedidos() {
+        if (pedidosDB.isEmpty()) {
+            System.out.println("No hay pedidos registrados.");
+            return;
+        }
+
+        for (Pedido p : pedidosDB) {
+            System.out.println(p);
+            System.out.println("-------------------------");
+        }
+        pausa();
+    }
+
 
 }
